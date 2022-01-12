@@ -1,18 +1,18 @@
 from utils.Verilog import Verilog
 import utils.APIs.APIs as api
 import argparse, os
-
+import utils.APIs.from_module as mp
 calculator = Verilog("calculator", "calculator.v")
-adder = Verilog("adder", "adder")
+adder = mp.asVerilog({"module" : "resources/rtl/test.v"})#Verilog("adder", "adder")
 subtractor  = Verilog("subtractor", "subtractor")
 
-adder.ports.add("a", direction="input", bit=7)
-adder.ports.add("b", direction="input", bit=7)
-adder.ports.add("sum", direction="output", bit=8)
-adder.assigns.add("sum", "a + b")
+# adder.ports.add("a", direction="input", bit=7)
+# adder.ports.add("b", direction="input", bit=7)
+# adder.ports.add("sum", direction="output", bit=8)
+# adder.assigns.add("sum", "a + b")
 
-subtractor.ports.add("a", direction="input", bit=7)
-subtractor.ports.add("b", direction="input", bit=7)
+subtractor.ports.add("input1", direction="input", bit=7)
+subtractor.ports.add("input2", direction="input", bit=7)
 subtractor.ports.add("result", direction="output", bit=8)
 subtractor.assigns.add("result", "a - b")
 

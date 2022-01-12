@@ -1,0 +1,20 @@
+{% for include in includes -%}
+`includes {{ include }}
+{% endfor -%}
+module {{ module }} ({% for port in ports +%}
+  {{ port.aligned_direction }}   {{ port.aligned_bit }}   {{ port.aligned_name }}   {% if loop.revindex0 != 0 %}, {% endif %}{% if loop.last != 1 %} {% endif %}
+  {%- endfor -%}
+{%- raw %}
+);
+{% endraw %}
+
+  {% for instance in instances -%} {{ instance.content }}
+  {% endfor -%}
+  {%+ for wire in wires -%}  wire    {{ wire.aligned_bit }}    {{ wire.prefix }}{{ wire.name }} {% if wire.rhs.strip() != "" %} = {{ wire.rhs }} {% endif %} ;
+  {% endfor -%}
+  {%+ for assign in assigns -%}  assign {{ assign.aligned_name }} = {{ assign.aligned_expression }}  ;
+  {% endfor -%}
+
+{% if True +%}
+endmodule
+{% endif %}

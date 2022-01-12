@@ -2,6 +2,8 @@ import re
 import argparse
 import json
 
+from utils.Verilog import Verilog
+
 def parsing():
   parser = argparse.ArgumentParser("Parsing Arguments")
   parser.add_argument("--module", help="Module path", required=True)
@@ -64,6 +66,12 @@ def main(args):
     with open(destination, "w") as f:
       json.dump(data, f, indent=4)
   return data
+def asVerilog(args):
+  data = main(args)
+  output = Verilog(data["module"], args["module"])
+  for each in data["ports"]:
+    output.ports.add(name=each["NAME"], direction=each["DIRECTION"], bit=each["BIT"])
+  return output
 if __name__ == "__main__":
   args = parsing().parse_args()
   main(vars(args))

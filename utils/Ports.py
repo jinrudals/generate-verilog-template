@@ -18,5 +18,7 @@ class Port(MyHasahble):
 
   #   return Port()
 class Ports(Grouping):
- def add(self, name : str, direction : str, bit : int, target = None, source = None) -> None:
-    self.lsts.add(Port(name=name, direction=direction, bit=self.bit_to_string(bit), target=target, source=source))
+  def add_raw(self, port : Port):
+    self.lsts.add(port)
+  def add(self, name : str, direction : str, bit : int, target = None, source = None) -> None:
+    self.add_raw(Port(name=name, direction=direction, bit=self.bit_to_string(bit), target=target, source=source))

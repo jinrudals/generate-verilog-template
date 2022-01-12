@@ -7,5 +7,7 @@ class Assign(MyHasahble):
     self.source = source
 
 class Assigns(Grouping):
+  def add_raw(self, assign : Assign):
+    self.lsts.add(assign)
   def add(self, target, expression, source = None):
-    self.lsts.add(Assign(target, expression, source))
+    self.add_raw(Assign(target, expression, source))

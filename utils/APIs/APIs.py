@@ -1,7 +1,6 @@
 import re, os
 from utils.Verilog import Verilog
 from utils.Wires import Wire
-
 def toJinja(each):
   return "{{ " + each + " }}"
 '''
@@ -87,7 +86,7 @@ def finalize(module, instance, jinja):
 
 def by_port(module, instance, jinja):
   module.wires = type(module.wires)()
-  data = {each : each.replace("Wire_","") for each in jinja}
+  data = {each : toJinja(each.replace("Wire_","")) for each in jinja}
   return data
 
 def name_match(module, instance, jinja):

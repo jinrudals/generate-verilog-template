@@ -66,9 +66,9 @@ def main(args):
     with open(destination, "w") as f:
       json.dump(data, f, indent=4)
   return data
-def asVerilog(args):
+def asVerilog(args, key = ""):
   data = main(args)
-  output = Verilog(data["module"], args["module"])
+  output = Verilog(data["module"], args["module"], key)
   for each in data["ports"]:
     output.ports.add(name=each["NAME"], direction=each["DIRECTION"], bit=each["BIT"])
   return output

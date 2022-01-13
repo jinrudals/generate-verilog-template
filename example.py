@@ -1,3 +1,4 @@
+#!/bin/env python3
 from utils.Verilog import Verilog
 import utils.APIs.APIs as api
 import argparse, os
@@ -13,7 +14,8 @@ subtractor  = Verilog("subtractor", "subtractor")
 
 subtractor.ports.add("input1", direction="input", bit=7)
 subtractor.ports.add("input2", direction="input", bit=7)
-subtractor.ports.add("result", direction="output", bit=8)
+subtractor.ports.add("result", direction="output", bit=64)
+subtractor.ports.add("test", direction="output", bit=128)
 subtractor.assigns.add("result", "a - b")
 
 calculator.add_instance(adder)

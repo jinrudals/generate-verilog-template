@@ -4,6 +4,11 @@ from utils.Assigns import Assigns
 
 import jinja2, os, re
 
+def remove_empty_line(data):
+  string = data["content"]
+  data["content"] = "\n".join([each for each in string.split("\n") if each.strip() != ""])
+  return data
+
 __base      = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 __resources = os.path.join(__base, os.path.join("resources", "jinja"))
 with open(os.path.join(__resources, "module.template")) as f:
@@ -25,10 +30,11 @@ class Verilog:
     return f"Verilog (modulename = {self.modulename})"
   def __eq__(self, other):
     return type(other) == Verilog and self.key == other.key
-  def __init__(self, modulename, filename, key = ""):
+  def __init__(self, modulename, filename = None, key = None):
     self.modulename = modulename
+    filename = modulename if filename == None else  filename
     self.filename   = filename if filename.endswith(".v") or filename.endswith(".sv") else filename + ".v"
-    self.key        = modulename if key == "" else key
+    self.key        = modulename if key == None else key
     self.instances  = dict()
     self.ports      = Ports()
     self.wires      = Wires()
@@ -55,7 +61,7 @@ class Verilog:
 
   def toModule(self):
     includes = set([each["raw"].filename for each in self.instances.values()])
-    return moduleTemplate.render(module=self.modulename, includes=includes, instances=self.instances.values(), ports=self.ports.align().sort().get(), wires=self.wires.align().sort().get(), assigns=self.assigns.align().sort().get())
+    return moduleTemplate.render(module=self.modulename, includes=includes, instances=[remove_empty_line(each) for each in  self.instances.values()], ports=self.ports.align().sort().get(), wires=self.wires.align().sort().get(), assigns=self.assigns.align().sort().get())
   def toInstance(self, instanceName, parentModule = None):
     if parentModule != None:
       for each in self.ports.get():

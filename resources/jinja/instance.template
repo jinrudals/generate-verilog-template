@@ -1,7 +1,5 @@
 {{ module }} {{ instance }} (
-    {% for port in ports -%}
-    .{{ port.aligned_name }}     ({% raw %}{{{% endraw %} Wire_{{ instance }}_{{ port.aligned_name }} {% raw %}}}{% endraw %}) {% if not loop.last %},{% endif %}
-    {% endfor -%}
-
+    {% for port in ports %} .{{ port.aligned_name }}     ({% raw %}{{{% endraw %} Wire_{{ instance }}_{{ port.aligned_name }} {% raw %}}}{% endraw %}) {% if not loop.last %},{% endif %}
+    {% endfor %}
   {% raw %}
   );{% endraw %}

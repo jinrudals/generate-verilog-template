@@ -2,4 +2,4 @@ generated/*
 *.log
 **/__pycache__
 Main.py
-resources/rtl/rhea-test.v
+resources/rtl/rhea_test.v

@@ -2,11 +2,17 @@ import re, os
 from utils.Verilog import Verilog
 from utils.Wires import Wire
 
-def write(target, verilogModule):
+def toJinja(each):
+  return "{{ " + each + " }}"
+'''
+Write a Verilog module to target directory
+'''
+def write(target, verilogModule: Verilog):
   with open(os.path.join(target, verilogModule.filename), "w") as f:
     f.write(verilogModule.toModule())
+
 '''
-find jinja template from toInstance output
+Find jinja variables from string
 '''
 def find_jinja_template(strings):
   data = []
@@ -18,7 +24,7 @@ def find_jinja_template(strings):
   return data
 
 '''
-move instance wire into top module port
+Add ports defined in socto module
 '''
 def toPort(module, instanceName, function = None):
   if function == None:
@@ -47,10 +53,10 @@ def to_the_pad(module, instance, jinja):
   for each in wires:
     x = Wire(bit = each.bit, name = each.name, source = each.source)
     module.wires.remove(x)
-    data[each.name] = "PAD_" + each.name.replace(f"Wire_{instance}_","")
+    data[each.name] = toJinja("PAD_" + each.name.replace(f"Wire_{instance}_",""))
   for each in jinja:
     if each not in data.keys():
-      data[each] = "{{ " + each + " }}"
+      data[each] = toJinja(each)
 
   return data
 def connect_instance_with_port(module, instance, instance_jinja):
@@ -63,17 +69,20 @@ def connect_instance_with_port(module, instance, instance_jinja):
   for each in wires:
     x = Wire(bit = each.bit, name = each.name, source = each.source)
     module.wires.remove(x)
-    data[each.name] = each.name.replace(f"Wire_{instance}_","")
+    data[each.name] = toJinja(each.name.replace(f"Wire_{instance}_",""))
   # print(instance)
   for each in instance_jinja:
     if each not in data.keys():
-      data[each] = "{{ " + each + " }}"
+      data[each] = toJinja(each)
   return data
 
-def finalize(module, isntance_name, jinja):
+def finalize(module, instance, jinja):
   data = {}
+  if len(jinja) == 0:
+    return data
+  max_length = max([len(each) for each in jinja])
   for each in jinja:
-    data[each] = each
+    data[each] = "  " + each.ljust(max_length) + "  "
   return data
 
 def by_port(module, instance, jinja):
@@ -94,10 +103,10 @@ def name_match(module, instance, jinja):
     key = y[0]
     removing_wire = [each for each in pad_wires if each.name in key][0]
     module.wires.remove(removing_wire)
-    data[key] = "Wire_designTop_" + each.name
+    data[key] = toJinja("Wire_designTop_" + each.name)
   for each in jinja:
     if each not in data.keys():
-      data[each] = "{{ " + each + " }}"
+      data[each] = toJinja(each)#"{{ " + each + " }}"
   return data
   # designTop_wires = [(f"{each.prefix}{each.name}".strip(), each.direction.strip(), each.name.strip()) for each in  module.instances["designTop"]["raw"].ports.get()]
   # data = {}

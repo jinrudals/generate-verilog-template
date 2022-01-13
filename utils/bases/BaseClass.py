@@ -1,6 +1,4 @@
 import copy
-
-
 class MyHasahble(object):
   def _in_init(self):
     return [each for each in dir(self) if not hasattr(type(self), each)]
@@ -58,7 +56,30 @@ class Grouping:
         data[member] = max([len(each) for each in k])
     for member in data.keys():
       for each in self.get():
-        setattr(each, "aligned_" + member, f"{getattr(each, member)}".ljust(data[member]))
+        if member == "bit":
+          original = getattr(each, member)
+          if len(original.strip()) == 0:
+            setattr(each, "aligned_" + member, original.ljust(data[member]))
+          else:
+            aligned = original[1:].rjust(data[member] - 1)
+            setattr(each, "aligned_" + member, f"[{aligned}")
+        elif member == "name" and type(self).__name__ == "Wires":
+          setattr(each, "aligned_" + member, f"{getattr(each, member)}".ljust(data[member]))
+          maximum = data["rhs"]
+          if maximum != 0:
+            rhs = getattr(each, "rhs")
+            name = getattr(each, "aligned_name")
+            newLength = len(" = ") + maximum
+            if rhs != "":
+              name = name + f" = {rhs}"
+            setattr(each, "aligned_" + "name", name.ljust(data["name"] + newLength))
+            # print(maximum)
+            # if getattr(each, "rhs") == 0:
+
+          # if "rhs" in data.keys():
+          #   rhs = getattr(each, "rhs")
+        else:
+          setattr(each, "aligned_" + member, f"{getattr(each, member)}".ljust(data[member]))
     return self
   def sort(self, key="name"):
     lsts = list(self.lsts)
